@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="T-Loss can effectively handle outliers in the data by controlling its sensitivity with a single parameter, 2023">
+  <meta name="keywords" content="T-Loss, Robust segmentation, robust loss, medical image segmentation, noisy labels">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Robust T-Loss for Medical Image Segmentation</title>
+
+
+  <!-- HTML Meta Tags -->
+  <meta name="description" content="T-Loss can effectively handle outliers in the data by controlling its sensitivity with a single parameter.">
+
+  <!-- Facebook Meta Tags -->
+  <meta property="og:url" content="https://visual-tactile-synthesis.github.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Robust T-Loss for Medical Image Segmentation">
+  <meta property="og:description" content="T-Loss can effectively handle outliers in the data by controlling its sensitivity with a single parameter, 2023">
+  <meta property="og:image" content="https://visual-tactile-synthesis.github.io/static/images/teaser.png">
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="twitter:domain" content="visual-tactile-synthesis.github.io">
+  <meta property="twitter:url" content="https://visual-tactile-synthesis.github.io/">
+  <meta name="twitter:title" content="Robust T-Loss for Medical Image Segmentation">
+  <meta name="twitter:description" content="T-Loss can effectively handle outliers in the data by controlling its sensitivity with a single parameter, 2023">
+  <meta name="twitter:image" content="https://visual-tactile-synthesis.github.io/static/images/teaser.png">
+
+  <!-- Meta Tags Generated via https://www.opengraph.xyz -->
+        
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGXGBVDE78"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-XGXGBVDE78');
+  </script>
+  <link rel="stylesheet" href="./static/css/juxtapose.css">
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/icon_1.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <!-- Load plotly.js into the DOM for the clickable events -->
+	<script src='https://cdn.plot.ly/plotly-2.14.0.min.js'></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <!-- <script src="./static/js/clickable.js"></script> -->
+
+  <!-- Load JaxtaposeJS for image slider -->
+  <!-- <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.knightlab.com/libs/juxtapose/latest/css/juxtapose.css"> -->
+  
+</head>
+<body>
+
+
+<!-- Title -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Robust T-Loss for Medical Image Segmentation</h1>
+          <h2 class="title is-3 publication-title">MICCAI 2023</h2>
+          
+
+          <!-- authors -->
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                Alvaro Gonzalez-Jimenez<sup>1</sup>&nbsp</span>
+              <span class="author-block">
+                <a href="https://www.hslu.ch/en/lucerne-university-of-applied-sciences-and-arts/about-us/people-finder/profile/?pid=4484">Simone Lionetti</a><sup>2</sup>&nbsp</span>
+              </span>
+              <span class="author-block">
+                Philippe Gottfrois<sup>1</sup>&nbsp</span>
+              <span class="author-block">
+                Fabian Groger<sup>1,2</sup>&nbsp
+              </span>
+              <span class="author-block">
+                <a href="https://marcpouly.ch/">Marc Pouly</a><sup>2</sup>&nbsp</span>
+              <span class="author-block">
+                <a href="https://navarinilab.com/">Alexander Navarini</a><sup>1</sup>&nbsp
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup> University of Basel
+                &nbsp</span>
+              <span class="author-block"><sup>2</sup>Lucerne School of Computer Science and Information Technology &nbsp</span>
+            </div>
+
+          <!-- Button for different release formats -->
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="./static/files/tloss.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Arxiv Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2305.03051"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+                <span class="link-block">
+                  <a href="#bibtex"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-obp"></i>
+                    </span>
+                    <span>BibTex</span>
+                  </a>
+                </span>
+              <!-- Video Link. -->
+              <!-- TODO: change to your own video link, e.g. https://www.youtube.com/watch?v=MrKrnHhk8IA -->
+              <!--
+              <span class="link-block">
+                <a href="https://www.youtube.com"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span>
+              -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/Digital-Dermatology"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Teaser video and text -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <!-- <video id="teaser" autoplay loop playsinline height="100%" controls muted="false">
+        <source src="./static/videos/website_teaser_video_v5_voiceover.mp4"
+                type="video/mp4">
+      </video> -->
+      <!-- Embed a Youtube video link for faster loading -->
+    </div>
+  </div>
+</section>
+
+<!-- Abstract -->
+  <section class="hero is-light is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop has-text-centered">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="has-text-justified">
+          <p>
+            This work presents a new robust loss function, T-Loss, for medical image
+            segmentation. The proposed loss is based on the negative log-likelihood
+            of the Student-t distribution and can effectively handle outliers in the data
+            by controlling its sensitivity with a single parameter. This parameter is
+            updated during the backpropagation process, eliminating the need for additional 
+            computation or prior information about the level and spread of noisy labels.
+            Our experiments show that T-Loss outperforms traditional loss functions in
+            terms of dice scores on two public medical datasets for skin lesion
+            and lung segmentation. We also demonstrate the ability of T-Loss
+            to handle different types of simulated label noise, resembling human error. Our results provide strong
+            evidence that T-Loss is a promising alternative for medical image segmentation
+            where high levels of noise or outliers in the dataset are a typical phenomenon in practice.
+          </p>
+          <br>
+        </div>
+    </div>
+    </div>
+  </section>
+   <!--/ Abstract. -->
+
+    <!-- Paper video. -->
+    <!-- <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div> -->
+    <!--/ Paper video. -->
+  </div>
+</section>
+
+
+
+
+<!-- Results, slidebar to show noisy image and t-loss prediction -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Robust Segmentation on ISIC</h2>
+        <div class="content has-text-justified">
+          <p>
+          To assess the model's robustness to low annotation quality, we introduced artificial mask noise due to the absence of real noisy and clean segmentation benchmarks. 
+          This simulated challenges such as annotator fatigue and difficulties in annotating certain images.
+          The columns show the initial noisy annotation and the T-Loss outputs. The masks are overlay with the original image for better comparison. 
+          </p>
+
+
+          <h2 class="title is-3 has-text-centered">Erode Masks</h2>
+          <p>
+We applied erosion, a morphological transformation that shrinks the annotated region, to introduce noise by reducing the size of the annotated area. This simulates incomplete or imprecise annotations where the annotator might miss parts of the object being segmented.
+          </p>
+
+          <!-- row 1 -->
+          <div class="columns is-centered">
+           
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Erode/Noise-erode-185.png" alt="" data-label="Erode">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Erode/Tloss-erode-185.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Erode/Noise-erode-227.png" alt="" data-label="Erode">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Erode/Tloss-erode-227.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 3 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="30%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Erode/Noise-erode-347.png" alt="" data-label="Erode">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Erode/Tloss-erode-347.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- col 4 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Erode/Noise-erode-360.png" alt="" data-label="Erode">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Erode/Tloss-erode-360.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- row 2 -->
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Erode/Noise-erode-364.png" alt="" data-label="Erode">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Erode/Tloss-erode-364.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Erode/Noise-erode-455.png" alt="" data-label="Erode">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Erode/Tloss-erode-455.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 3 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Erode/Noise-erode-20.png" alt="" data-label="Erode">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Erode/Tloss-erode-20.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- col 4 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Erode/Noise-erode-209.png" alt="" data-label="Erode">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Erode/Tloss-erode-209.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          
+
+
+          <h2 class="title is-3 has-text-centered">Dilated Masks</h2>
+          <p>
+          In addition to erosion, we used dilation to enlarge the annotated area, introducing noise that expands the annotated region beyond its actual boundaries. This represents situations where the annotator inadvertently includes extra background or surrounding areas, resulting in overestimated or inaccurate annotations.
+          </p>
+
+
+          <!-- row 3 -->
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Dilate/Noise-dilate-22.png" alt="" data-label="Dilate">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Dilate/Tloss-dilate-22.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Dilate/Noise-dilate-81.png" alt="" data-label="Dilate">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Dilate/Tloss-dilate-81.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 3 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Dilate/Noise-dilate-122.png" alt="" data-label="Dilate">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Dilate/Tloss-dilate-122.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- col 4 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Dilate/Noise-dilate-158.png" alt="" data-label="Dilate">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Dilate/Tloss-dilate-158.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>         
+
+          <!-- row 4 -->
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Dilate/Noise-dilate-181.png" alt="" data-label="Dilate">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Dilate/Tloss-dilate-181.png" alt="" data-label="TLoss">
+                      </div>
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Dilate/Noise-dilate-224.png" alt="" data-label="Dilate">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Dilate/Tloss-dilate-224.png" alt="" data-label="TLoss">
+                      </div>
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 3 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Dilate/Noise-dilate-228.png" alt="" data-label="Dilate">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Dilate/Tloss-dilate-228.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- col 4 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Dilate/Noise-dilate-307.png" alt="" data-label="Dilate">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Dilate/Tloss-dilate-307.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>         
+
+          <h2 class="title is-3 has-text-centered">Affine Masks</h2>
+          <p>
+                We applied affine transformations, including rotation, scaling, shearing, and translation, to displace the annotated region from its original position. This noise emulates spatial errors or misalignments made by the annotator while marking the object, resulting in shifted or misregistered annotations.
+          </p>
+
+          <!-- row 5 -->
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Affine/Noise-affine-21.png" alt="" data-label="Affine">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Affine/Tloss-affine-21.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Affine/Noise-affine-91.png" alt="" data-label="Affine">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Affine/Tloss-affine-91.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 3 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Affine/Noise-affine-131.png" alt="" data-label="Affine">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Affine/Tloss-affine-131.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- col 4 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Affine/Noise-affine-190.png" alt="" data-label="Affine">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Affine/Tloss-affine-190.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>         
+          <!-- row 6 -->
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Affine/Noise-affine-210.png" alt="" data-label="Affine">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Affine/Tloss-affine-210.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Affine/Noise-affine-212.png" alt="" data-label="Affine">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Affine/Tloss-affine-212.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 3 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Affine/Noise-affine-250.png" alt="" data-label="Affine">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Affine/Tloss-affine-250.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- col 4 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed2" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/Affine/Noise-affine-332.png" alt="" data-label="Affine">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/Affine/Tloss-affine-332.png" alt="" data-label="TLoss">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>         
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Graph. -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+          <h2 class="title is-3 has-text-centered">Dynamic tolerance to noise</h2>
+          <p>
+          Our proposed T-Loss, incorporates a single parameter that dynamically adjusts to the noise level present in the dataset. 
+          This unique feature allows the model to adapt and account for varying levels of noise during the training process. 
+          On the right we show that the parameter dynamically adjusts annotation noise tolerance in the early stages of training, independently of its initial value.
+          As the training advances, it clearly converges to a stable solution, with initializations far from this solution only mildly prolonging the time needed for convergence.
+          </p>
+
+          <!-- row 1 -->
+          <div class="columns is-centered">
+           
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                        <img src="./static/images/nu_tildes_noises.png" alt="">
+                    </div>
+                  </div>
+            <!-- col 2 -->
+            <div class="column">
+              <div class="content">
+                        <img src="./static/images/nu_tildes_ablation.png" alt="">
+                    </div>
+                  </div>
+
+       </div>
+    </div>
+  </div>
+</section>
+<!-- Graphs -->
+
+
+<!-- References and Acknowledgement -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="container is-max-desktop">
+
+           <!-- Code -->
+          <div class="columns is-centered">
+            <div class="column is-full-width">
+              <h2 class="title is-3 has-text-centered">PyTorch Code</h2>
+              <div class="content has-text-justified">
+      <pre><code>
+      import torch 
+      import torch.nn as nn
+      class T_Loss(nn.Module):
+          def __init__(self, dim, epsilon=1e-8, reduce='mean'):
+              super().__init__()
+              self.dim = dim
+              self.epsilon = epsilon
+              self.nu_tilde = nn.Parameter(torch.tensor(1.0))
+              self.reduce = reduce
+
+          def forward(self, inputs, target):
+              delta = inputs-target
+              nu = torch.exp(self.nu_tilde) + self.epsilon
+
+              # Compute terms of the loss function
+              first = -torch.lgamma((nu + self.dim) / 2)
+              second = torch.lgamma(nu / 2)
+              third = (self.dim / 2) * torch.log(torch.tensor(np.pi)*nu)
+                  
+              fraction = delta*delta / nu
+              fourth = ((nu + self.dim) / 2) * torch.log(1 + fraction)
+
+              # Compute total loss
+              loss = first + second + third + fourth
+
+              # Reduce loss over the batch
+              if self.reduce == 'mean':
+                  return torch.mean(loss)
+              elif self.reduce == 'sum':
+                  return torch.sum(loss)
+              else:
+                  raise ValueError(f"The reduction {self.reduce} is not implemented")
+      </code></pre>
+              </div> 
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BibTex -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title" id="bibtex">BibTeX</h2>
+    <pre><code>@incollection{gonzalezjimenezRobustTLoss2023,
+  title     = {Robust T-Loss for Medical Image Segmentation},
+  author    = {Gonzalez-Jimenez, Alvaro and Lionetti, Simone and Gottfrois, Philippe and Groger, Fabian and Pouly, Marc and Navarini, Alexander},
+  journal   = {Medical {{Image Computing}} and {{Computer Assisted Intervention}} – {{MICCAI}} 2023},
+  publisher = {{Springer International Publishing}},
+  year      = {2023},
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="./static/files/tloss.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/Digital-Dermatology" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is adapted from <a href="https://github.com/nerfies/nerfies.github.io">nerfies</a>.
+            We thank the authors for open-sourcing the source code. 
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+
+<!-- javascript code for customized juxtapose -->
+<script src="./static/js/juxtapose.js"></script>
+<!-- javascript code for clickable events -->
+<script src="./static/js/clickable.js"></script>
+
+
+</html>
