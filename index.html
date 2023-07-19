@@ -956,62 +956,6 @@ We applied erosion, a morphological transformation that shrinks the annotated re
 <!-- Graphs -->
 
 
-<!-- References and Acknowledgement -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <div class="container is-max-desktop">
-
-           <!-- Code -->
-          <div class="columns is-centered">
-            <div class="column is-full-width">
-              <h2 class="title is-3 has-text-centered">PyTorch Code</h2>
-              <div class="content has-text-justified">
-      <pre><code>
-      import torch 
-      import torch.nn as nn
-      class T_Loss(nn.Module):
-          def __init__(self, dim, epsilon=1e-8, reduce='mean'):
-              super().__init__()
-              self.dim = dim
-              self.epsilon = epsilon
-              self.nu_tilde = nn.Parameter(torch.tensor(1.0))
-              self.reduce = reduce
-
-          def forward(self, inputs, target):
-              delta = inputs-target
-              nu = torch.exp(self.nu_tilde) + self.epsilon
-
-              # Compute terms of the loss function
-              first = -torch.lgamma((nu + self.dim) / 2)
-              second = torch.lgamma(nu / 2)
-              third = (self.dim / 2) * torch.log(torch.tensor(np.pi)*nu)
-                  
-              fraction = delta*delta / nu
-              fourth = ((nu + self.dim) / 2) * torch.log(1 + fraction)
-
-              # Compute total loss
-              loss = first + second + third + fourth
-
-              # Reduce loss over the batch
-              if self.reduce == 'mean':
-                  return torch.mean(loss)
-              elif self.reduce == 'sum':
-                  return torch.sum(loss)
-              else:
-                  raise ValueError(f"The reduction {self.reduce} is not implemented")
-      </code></pre>
-              </div> 
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- BibTex -->
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
