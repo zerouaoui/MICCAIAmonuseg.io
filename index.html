@@ -17,7 +17,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="AMONuSeg: A Histological Dataset for African Multi-Organ Nuclei Semantic Segmentation">
   <meta property="og:description" content="AMONuSeg: A Histological Dataset for African Multi-Organ Nuclei Semantic Segmentation, 2024">
-  <meta property="og:image" content="https://MICCAIAmonuseg.github.io/static/images/teaser.png">
+  <meta property="og:image" content="./static/images/teaser.png">
 
   <!-- Twitter Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
@@ -25,7 +25,7 @@
   <meta property="twitter:url" content="https://visual-tactile-synthesis.github.io/">
   <meta name="twitter:title" content="Robust T-Loss for Medical Image Segmentation">
   <meta name="twitter:description" content="T-Loss can effectively handle outliers in the data by controlling its sensitivity with a single parameter, 2023">
-  <meta name="twitter:image" content="https://visual-tactile-synthesis.github.io/static/images/teaser.png">
+  <meta name="twitter:image" content="./static/images/teaser.png">
 
   <!-- Meta Tags Generated via https://www.opengraph.xyz -->
         
@@ -277,13 +277,13 @@ histopathology segmentation with low-resource data.
           <p>
           Two trained annotators, a data scientist (A1) and a
 post-doc researcher (A2), conducted the annotation process on nuclei segmentation by an expert pathologist to generate the ground truth masks. 
-The annotation protocol was inspired by the CryoNuSeg and MoNuSeg datasets protocols [20,18], which was further enhanced by adding a first validation using
+The annotation protocol was inspired by the CryoNuSeg and MoNuSeg datasets protocols, which was further enhanced by adding a first validation using
 the masks generated automatically by the FIJI ImageJ software. The annotation process:
 <ul> Generate unsupervised automatic nuclei semantic segmentation masks using
 the Fiji ImageJ software, which serve as preliminary annotations for the
 tissue slides. These annotations provide a rough estimate of the nuclei locations, simplifying the initial annotation process for the two annotators A1
 & A2.</ul>
-<ul>Perform manual nuclei semantic segmentation using the LabelStudio [4] segmentation tool by the two annotators A1 & A2.</ul>
+<ul>Perform manual nuclei semantic segmentation using the LabelStudio segmentation tool by the two annotators A1 & A2.</ul>
 <ul>Conduct a second round of intra-observation by A2 to validate the annotations made by A1.</ul>
 <ul>Validate the final manual-generated ground truth masks by three expert
 pathologists with 4, 10 and 15 years of experience.</ul>
