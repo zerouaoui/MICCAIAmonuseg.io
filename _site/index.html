@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="AMONuSeg paper introduces the first fully annotated African multi-organ dataset for histopathology, 2024">
+  <meta name="keywords" content="Low-Ressource Data, Semantic segmentation, Vision Transformers, medical image segmentation, Spectral features">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AMONuSeg</title>
+
+
+  <!-- HTML Meta Tags -->
+  <meta name="description" content="AMONuSeg: A Histological Dataset for African Multi-Organ Nuclei Semantic Segmentation">
+
+  <!-- Facebook Meta Tags -->
+  <meta property="og:url" content="https://visual-tactile-synthesis.github.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AMONuSeg: A Histological Dataset for African Multi-Organ Nuclei Semantic Segmentation">
+  <meta property="og:description" content="AMONuSeg: A Histological Dataset for African Multi-Organ Nuclei Semantic Segmentation, 2024">
+  <meta property="og:image" content="https://MICCAIAmonuseg.github.io/static/images/teaser.png">
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="twitter:domain" content="visual-tactile-synthesis.github.io">
+  <meta property="twitter:url" content="https://visual-tactile-synthesis.github.io/">
+  <meta name="twitter:title" content="Robust T-Loss for Medical Image Segmentation">
+  <meta name="twitter:description" content="T-Loss can effectively handle outliers in the data by controlling its sensitivity with a single parameter, 2023">
+  <meta name="twitter:image" content="https://visual-tactile-synthesis.github.io/static/images/teaser.png">
+
+  <!-- Meta Tags Generated via https://www.opengraph.xyz -->
+        
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGXGBVDE78"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-XGXGBVDE78');
+  </script>
+  <link rel="stylesheet" href="./static/css/juxtapose.css">
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/icon_1.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <!-- Load plotly.js into the DOM for the clickable events -->
+	<script src='https://cdn.plot.ly/plotly-2.14.0.min.js'></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <!-- <script src="./static/js/clickable.js"></script> -->
+
+  <!-- Load JaxtaposeJS for image slider -->
+  <!-- <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.knightlab.com/libs/juxtapose/latest/css/juxtapose.css"> -->
+  
+</head>
+<body>
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://www.navarinilab.com/en/">
+      <span class="icon">
+          <svg class="svg-inline--fa fa-home fa-w-18" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="home" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg=""><path fill="currentColor" d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"></path></svg><!-- <i class="fas fa-home"></i> Font Awesome fontawesome.com -->
+      </span>
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Title -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">AMONuSeg: A Histological Dataset for African Multi-Organ Nuclei Semantic Segmentation</h1>
+          <h2 class="title is-3 publication-title">MICCAI 2024</h2>
+          
+
+          <!-- authors -->
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://www.hasnaezerouaoui.com/">Hasnae Zerouaoui </a><sup>1</sup>&nbsp
+				</span>
+              <span class="author-block">
+                <a href="https://abuportal-ng.academia.edu/GbengaPitaOderindeGbenga Peter Oderinde</a><sup>2</sup>&nbsp
+				</span>
+              <span class="author-block">
+                <a href="https://github.com/LefdRida">Rida Lefdali</a><sup>1</sup>&nbsp
+              </span>
+              <span class="author-block">
+                <a href="https://echihabi.com/">Karima Echiabi</a><sup>1</sup>&nbsp
+			  </span>
+              <span class="author-block">
+                <a>Stephen Peter Akpul</a><sup>3</sup>&nbsp
+              </span>
+			  <span class="author-block">
+                <a>Nosereme Abel Agbon</a><sup>2</sup>&nbsp
+              </span>
+			  <span class="author-block">
+                <a>Abraham Sunday Musa </a><sup>2</sup>&nbsp
+              </span>
+			  <span class="author-block">
+                <a href="https://www.cs.cit.tum.de/camp/members/yousef-yeganeh/">Yousef Yeganeh</a><sup>4,5</sup>&nbsp
+              </span>
+			  <span class="author-block">
+                <a href="https://www.cs.cit.tum.de/en/camp/members/azade-farshad/">Azade Farshad </a><sup>4,5</sup>&nbsp
+              </span>
+			  <span class="author-block">
+                <a href="https://www.professoren.tum.de/en/navab-nassir">Nassir Navab</a><sup>4,5</sup>&nbsp
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup> Mohammed VI Polytechnic University, Benguerir, Morocco 
+                &nbsp</span>
+              <span class="author-block"><sup>2</sup>Ahmadu Bello University, Zaria, Nigeria &nbsp</span>
+			  <span class="author-block"><sup>1</sup> Federal University of Lafia, Lafia, Nigeria 
+                &nbsp</span>
+				<span class="author-block"><sup>1</sup> Technical University of Munich, Munich, Germany
+                &nbsp</span>
+				<span class="author-block"><sup>1</sup> Munich Center for Machine Learning, Munich, Germany 
+                &nbsp</span>
+            </div>
+
+          <!-- Button for different release formats -->
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="./static/files/Amonuseg.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+			  
+          
+              <span class="link-block">
+                <a href="./static/files/AMONUSEGPoster.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Poster</span>
+                </a>
+              </span>
+              <!-- Arxiv Link. -->
+
+                <span class="link-block">
+                  <a href="#bibtex"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-obp"></i>
+                    </span>
+                    <span>BibTex</span>
+					</a>
+					</span>
+             <span class="link-block">
+                <a href="https://github.com/zerouaoui/AMONUSEG"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code & Data </span>
+                  </a>
+				  
+				  <a href="https://github.com/zerouaoui/AMONUSEG/tree/master/AMONuSeg"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Data</span>
+                  </a>
+              </span>
+			  		<span class="link-block">	  				  
+				  <a href="https://xnat.bmia.nl/app/action/DisplayItemAction/search_value/africai_miccai2024_amonuseg/search_element/xnat:projectData/search_field/xnat:projectData.ID"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-obp"></i>
+                  </span>
+                  <span>Open Data</span>
+                  </a>
+              </span>
+              </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Teaser video and text -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <!-- <video id="teaser" autoplay loop playsinline height="100%" controls muted="false">
+        <source src="./static/videos/website_teaser_video_v5_voiceover.mp4"
+                type="video/mp4">
+      </video> -->
+      <!-- Embed a Youtube video link for faster loading -->
+    </div>
+  </div>
+</section>
+
+<!-- Abstract -->
+  <section class="hero is-light is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop has-text-centered">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="has-text-justified">
+          <p>
+            Nuclei semantic segmentation is a key component for advancing machine learning and deep learning applications in digital pathology.
+However, most existing segmentation models are trained and tested on
+high-quality data acquired with expensive equipment, such as whole slide
+scanners, which are not accessible to most pathologists in developing
+countries. These pathologists rely on low-resource data acquired with
+low-precision microscopes, smartphones, or digital cameras, which have
+different characteristics and challenges than high-resource data. Therefore, there is a gap between the state-of-the-art segmentation models
+and the real-world needs of low-resource settings. This work aims to
+bridge this gap by presenting the first fully annotated African multiorgan dataset for histopathology nuclei semantic segmentation acquired
+with a low-precision microscope. We also evaluate state-of-the-art segmentation models, including spectral feature extraction encoder and vision transformer-based models, and stain normalization techniques for
+color normalization of Hematoxylin and Eosin-stained histopathology
+slides. Our results provide important insights for future research on nuclei
+histopathology segmentation with low-resource data. 
+
+          </p>
+          <br>
+        </div>
+    </div>
+    </div>
+  </section>
+  
+
+
+<!-- Results, slidebar to show noisy image and t-loss prediction -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Annotation Process</h2>
+        <div class="content has-text-justified">
+          <p>
+          Two trained annotators, a data scientist (A1) and a
+post-doc researcher (A2), conducted the annotation process on nuclei segmentation by an expert pathologist to generate the ground truth masks. 
+The annotation protocol was inspired by the CryoNuSeg and MoNuSeg datasets protocols [20,18], which was further enhanced by adding a first validation using
+the masks generated automatically by the FIJI ImageJ software. The annotation process:
+<ul> Generate unsupervised automatic nuclei semantic segmentation masks using
+the Fiji ImageJ software, which serve as preliminary annotations for the
+tissue slides. These annotations provide a rough estimate of the nuclei locations, simplifying the initial annotation process for the two annotators A1
+& A2.</ul>
+<ul>Perform manual nuclei semantic segmentation using the LabelStudio [4] segmentation tool by the two annotators A1 & A2.</ul>
+<ul>Conduct a second round of intra-observation by A2 to validate the annotations made by A1.</ul>
+<ul>Validate the final manual-generated ground truth masks by three expert
+pathologists with 4, 10 and 15 years of experience.</ul>
+<ul>Correct the manual nuclei annotations based on the mark-ups and observations of the three expert pathologists.</ul>
+<ul>Conduct a final validation by three expert pathologists to ensure that the
+annotations meet the highest standards to help the pathologist make the
+diagnosis</ul>
+          </p>
+
+
+          <h2 class="title is-3 has-text-centered">FD-NET</h2>
+          <p>
+The FD-Net model consists of Two Branches:
+<ul> Spatial encoder branch that processes spatial features and consists of convolutional blocks. </ul>
+<ul>Spectral branch that processes spectral features and consists of fast Fourier convolutional blocks. </ul>
+The input images of the two branches are: 
+<ul>For the spatial encoder branch: The input image can be either the original image or a stain-normalized preprocessed image using Macenko, Reinhard, or StainGAN methods. 
+</ul>
+<ul>For the spectral encoder branch: The input image and the generated mean attention map using Dino v1 are fed to the spectral branch.
+</ul>
+            <div class="column">
+              <div class="content">
+                        <img src="./static/images/teaser.png" alt="">
+                    </div>
+                  </div>
+
+          </p>
+
+  
+
+
+          <h2 class="title is-3 has-text-centered">Annotations Validated By Expert 1</h2>
+          <p> Samples of breast, skin, cervical and ingunal and their annotation masks validated by expert 1         </p>
+
+
+          <!-- row 3 -->
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/EXP1/2-BrB.jpg" alt="" data-label="Breast">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/EXP1/2-BrB.png" alt="" data-label=" Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+             <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/EXP1/6-CB.jpg" alt="" data-label="Cervical">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/EXP1/6-CB.png" alt="" data-label="Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+			</div>
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/EXP1/3-IgB.jpg" alt="" data-label="Inguinal">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/EXP1/3-IgB.png" alt="" data-label=" Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+             <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/EXP1/1-SB.jpg" alt="" data-label="Skin">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/EXP1/1-SB.png" alt="" data-label="Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+			</div>
+			
+
+
+          <h2 class="title is-3 has-text-centered">Annotations Validated By Expert 2</h2>
+          <p> Samples of breast, skin, cervical and ingunal and their annotation masks validated by expert 2         </p>
+
+
+          <!-- row 3 -->
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/EXP2/2-BrB.jpg" alt="" data-label="Breast">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/EXP2/2-BrB.png" alt="" data-label=" Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+             <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/EXP2/6-CB.jpg" alt="" data-label="Cervical">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/EXP2/6-CB.png" alt="" data-label="Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+			</div>
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/EXP2/3-IgB.jpg" alt="" data-label="Inguinal">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/EXP2/3-IgB.png" alt="" data-label=" Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+             <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/EXP1/1-SB.jpg" alt="" data-label="Skin">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/EXP1/1-SB.png" alt="" data-label="Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+			</div>
+			
+			          <h2 class="title is-3 has-text-centered">Masks Generated with FD-Net</h2>
+          <p>        </p>
+
+
+          <!-- row 3 -->
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/FD/2-BrB.jpg" alt="" data-label="Breast">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/FD/2-BrB.png" alt="" data-label=" Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+             <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/FD/6-CB.jpg" alt="" data-label="Cervical">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/FD/6-CB.png" alt="" data-label="Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+			</div>
+          <div class="columns is-centered">
+
+            <!-- col 1 -->
+            <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/FD/3-IgB.jpg" alt="" data-label="Inguinal">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/FD/3-IgB.png" alt="" data-label=" Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- col 2 -->
+             <div class="column">
+              <div class="content">
+                <div class="tab_container">
+                  <div id="juxtapose-embed1" data-startingposition="50%" data-animate="true" class="juxtapose">
+                    <div class="jx-slider">
+                      <div class="jx-handle " style="left: 54.53%;">
+                        <div class="jx-arrow jx-left"></div>
+                        <div class="jx-control">
+                          <div class="jx-controller" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                        <div class="jx-arrow jx-right"></div>
+                      </div>
+                      <div class="jx-image jx-left " style="width: 54.53%;">
+                        <img src="./static/images/noise_results/FD/1-SB.jpg" alt="" data-label="Skin">
+                      </div>
+                      <div class="jx-image jx-right " style="width: 45.47%;">
+                        <img src="./static/images/noise_results/FD/1-SB.png" alt="" data-label="Mask">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+			</div>
+</section>
+
+<!-- Graphs -->
+
+
+<!-- BibTex -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title" id="bibtex">BibTeX</h2>
+    <pre><code>To be updated</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="./static/files/tloss.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/Digital-Dermatology" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is adapted from <a href="https://github.com/nerfies/nerfies.github.io">nerfies</a>.
+            We thank the authors for open-sourcing the source code. 
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+
+<!-- javascript code for customized juxtapose -->
+<script src="./static/js/juxtapose.js"></script>
+<!-- javascript code for clickable events -->
+<script src="./static/js/clickable.js"></script>
+
+
+</html>
